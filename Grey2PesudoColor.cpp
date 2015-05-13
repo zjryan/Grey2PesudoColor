@@ -39,23 +39,9 @@ readBMP(char* bmpName){
 	//Grey:1 bit	16-color:4 bits		256-color:16 bits
 	
 	//create color table for Grey,16-color,256-color BMP image
-	switch (biBitCount){
-	case 1:{
-			   pColorTable = new RGBQUAD[2];
-			   fread(pColorTable, sizeof(RGBQUAD), 2, fp);
-			   break;
-	}
-	case 4:{
-			   pColorTable = new RGBQUAD[16];
-			   fread(pColorTable, sizeof(RGBQUAD), 16, fp);
-			   break;
-	}
-	case 8:{
-			   pColorTable = new RGBQUAD[256];
-			   fread(pColorTable, sizeof(RGBQUAD), 256, fp);
-			   break;
-	}
-	default:break;
+	if(biBitCount == 8){
+		pColorTable = new RGBQUAD[256];
+		fread(pColorTable, sizeof(RGBQUAD), 256, fp);
 	}
 
 	pBmp = new unsigned char[lineByte * bmpHeight];
