@@ -7,10 +7,10 @@
 using namespace std;
 
 unsigned char  *pBmp;			//pointer to BMP data
-	 	  int   bmpWidth;		//width of the BMP image
-		  int   bmpHeight;		//height of the BMP image
-	  RGBQUAD  *pColorTable;	//pointer to color table
-		  int   biBitCount;		//number of bit per pixel
+	  int   bmpWidth;		//width of the BMP image
+	  int   bmpHeight;		//height of the BMP image
+      RGBQUAD  *pColorTable;		//pointer to color table
+	  int   biBitCount;		//number of bit per pixel
 
 //import BMP data
 void
