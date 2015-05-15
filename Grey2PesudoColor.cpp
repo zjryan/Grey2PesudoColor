@@ -61,8 +61,7 @@ readBMP(char* bmpName){
 
 void
 saveBMP(char *bmpName, unsigned char *imgBuf, int width, int height,
-	int biBitCount, RGBQUAD *pColorTable)
-{
+	int biBitCount, RGBQUAD *pColorTable){
 	//no image
 	if (imgBuf == nullptr)
 		return;
