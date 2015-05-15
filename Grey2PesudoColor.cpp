@@ -42,7 +42,6 @@ readBMP(char* bmpName){
 	//create color table for Grey,16-color,256-color BMP image
 	if (biBitCount == 8){
 		pColorTable = new RGBQUAD[256];
-//		pColorTable = (RGBQUAD*)malloc(sizeof(RGBQUAD)* 256);
 		fread(pColorTable, sizeof(RGBQUAD), 256, fp);
 		for (int i = 0; i < 256; i++){
 			pColorTable[i].rgbBlue = (BYTE)i;
