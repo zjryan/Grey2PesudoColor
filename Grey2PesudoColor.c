@@ -45,7 +45,6 @@ readBMP(char* bmpName){
 		}
 	}
 
-	//pBmp = new unsigned char[lineByte * bmpHeight];
 	pBmp = (unsigned char*)malloc(sizeof(unsigned char) * lineByte * bmpHeight);
 	fread(pBmp, 1, lineByte * bmpHeight, fp);
 
