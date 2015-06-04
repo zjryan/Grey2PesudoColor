@@ -51,7 +51,6 @@ readBMP(char* bmpName){
 
 	fclose(fp);
 	printf("BMP image loaded successfully!\n");
-
 }
 
 void
@@ -133,7 +132,7 @@ getPartition(int ori, int numParti){
 }
 
 static int randomColorGenerator(){
-	return (rand() + time(NULL)) % 256;
+	return rand() % 256;
 }
 
 static void
