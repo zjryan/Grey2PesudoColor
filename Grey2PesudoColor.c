@@ -1,10 +1,4 @@
-#include <fstream>
-#include <iostream>
-#include <Windows.h>
-#include <stdio.h>
-#include "grey2PesudoColor.h"
-
-using namespace std;
+#include "grey2PesudColor.h"
 
 unsigned char  *pBmp;			//pointer to BMP data
 	  int   bmpWidth;		//width of the BMP image
@@ -17,9 +11,9 @@ void
 readBMP(char* bmpName){
 	//read binary mode
 	FILE *fp = fopen(bmpName, "rb");
-	if (fp == nullptr){
-		cout << "read BMP file failed" << endl;
-		return;
+	if (fp == NULL){
+		printf("read BMP file failed\n");
+		exit(1);
 	}
 
 	//ignore bitmapfile header
@@ -41,7 +35,7 @@ readBMP(char* bmpName){
 	
 	//create color table for Grey,16-color,256-color BMP image
 	if (biBitCount == 8){
-		pColorTable = new RGBQUAD[256];
+		pColorTable = (RGBQUAD*)malloc(sizeof(RGBQUAD)* 256);
 		fread(pColorTable, sizeof(RGBQUAD), 256, fp);
 		for (int i = 0; i < 256; i++){
 			pColorTable[i].rgbBlue = (BYTE)i;
@@ -51,20 +45,22 @@ readBMP(char* bmpName){
 		}
 	}
 
-	pBmp = new unsigned char[lineByte * bmpHeight];
+	//pBmp = new unsigned char[lineByte * bmpHeight];
+	pBmp = (unsigned char*)malloc(sizeof(unsigned char) * lineByte * bmpHeight);
 	fread(pBmp, 1, lineByte * bmpHeight, fp);
 
 	fclose(fp);
-	cout << "BMP image loaded successfully!" << endl;
+	printf("BMP image loaded successfully!\n");
 
 }
 
 void
 saveBMP(char *bmpName, unsigned char *imgBuf, int width, int height,
-	int biBitCount, RGBQUAD *pColorTable){
+	int biBitCount, RGBQUAD *pColorTable)
+{
 	//no image
-	if (imgBuf == nullptr)
-		return;
+	if (imgBuf == NULL)
+		exit(1);
 
 	//the size of colortable of grey image is 256*4 = 1024 BYTES
 	int colorTablesize = 0;
@@ -77,9 +73,9 @@ saveBMP(char *bmpName, unsigned char *imgBuf, int width, int height,
 	
 	//open the file with wb mode
 	FILE *fp = fopen(bmpName, "wb");
-	if (fp == nullptr) {
-		cout << "read BMP image failed" << endl;
-		return;
+	if (fp == NULL) {
+		printf("read BMP image failed");
+		exit(1);
 	}
 	//fileheader informations
 	BITMAPFILEHEADER fileHead;
@@ -118,7 +114,7 @@ saveBMP(char *bmpName, unsigned char *imgBuf, int width, int height,
 	//write BMP data into the file
 	fwrite(imgBuf, height * lineByte, 1, fp);
 	fclose(fp);
-	cout << "image saved" << endl;
+	printf("image saved\n");
 	return;
 }
 
@@ -133,50 +129,40 @@ addColor(RGBQUAD* pColor, int i, BYTE R, BYTE G, BYTE B){
 
 static int
 getPartition(int ori, int numParti){
-	return (ori / 256.0)*numParti;
+	return (int)((ori / 256.0) * numParti);
+}
+
+static int randomColorGenerator(){
+	return (rand() + time(NULL)) % 256;
 }
 
 static void
 grey2PesudoColor(unsigned char* imgBuf, int height, int lineByte){
-#define COLORNUM 3
+	enum { ColorNum = 4 };
 	//self-defined color table
-	//RGBQUAD* pCustomColor = new RGBQUAD[COLORNUM];
 	//Red
+	/*
 	addColor(pColorTable, 0, 255, 0, 0);
 	//Green
 	addColor(pColorTable, 1, 0, 255, 0);
 	//Blue
 	addColor(pColorTable, 2, 0, 0, 255);
+	*/
 
-	for (int i = 0; i < height*lineByte; i++){
-		int status = getPartition((int)*imgBuf, COLORNUM);
+	//random generates color
+	int i;
+	for (i = 0; i < ColorNum; i++){
+		BYTE randColor1 = randomColorGenerator();
+		BYTE randColor2 = randomColorGenerator();
+		BYTE randColor3 = randomColorGenerator();
+
+		addColor(pColorTable, i, randColor1, randColor2, randColor3);
+	}
+
+	for (i = 0; i < height * lineByte; i++){
+		int status = getPartition((int)*imgBuf, ColorNum);
 		//change pixel index
-		switch (status){
-		case 0:{
-				   *imgBuf = 0;
-				   break;
-		}
-		case 1:{
-				   *imgBuf = 1;
-				   break;
-		}
-		case 2:{
-				   *imgBuf = 2;
-				   break;
-		}
-		default:break;
-		}
+		*imgBuf = status;
 		imgBuf++;
 	}
-}
-
-int main(){
-	readBMP("C:\\Cppproj\\Grey2PesudColor\\testbmp1.bmp");
-	saveBMP("C:\\Cppproj\\Grey2PesudColor\\modifiedBMP1.bmp", pBmp, bmpWidth, bmpHeight,
-		biBitCount, pColorTable);
-	delete pBmp;
-	pBmp = nullptr;
-	delete pColorTable;
-	pColorTable = nullptr;
-	return 0;
 }
